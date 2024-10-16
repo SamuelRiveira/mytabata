@@ -1,7 +1,7 @@
+// MainActivity.kt
 package dev.samu.mytabata
 
 import android.os.Bundle
-import android.os.CountDownTimer
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,14 +15,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import dev.samu.mytabata.ui.theme.MytabataTheme
-
-var counterState : Boolean = false
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +40,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Counter(modifier: Modifier) {
-    var theCounter by remember { mutableStateOf(99L) }
+    var theCounter by remember { mutableLongStateOf(0L) }
+
+    val miCounterDown = CounterDown(99, { newCounterValue -> theCounter = newCounterValue})
 
     Column(
         modifier = Modifier
@@ -52,31 +52,21 @@ fun Counter(modifier: Modifier) {
     ) {
         Row {
             Text(text = theCounter.toString())
-
         }
         Row {
             Button(
                 modifier = Modifier,
                 onClick = {
-                    var myCounter = object : CountDownTimer(99000, 1000) {
-
-                        override fun onTick(millisUntilFinished: Long) {
-                            theCounter = millisUntilFinished / 1000
-                        }
-
-                        override fun onFinish() {
-                            theCounter = 0
-                        }
-                    }
-                    if (!counterState) {
-                        myCounter.start()
-                        counterState = true
-                    } else{
-                        myCounter.cancel()
+                    if (!miCounterDown.counterState) {
+                        miCounterDown.myCounter.start()
+                        miCounterDown.counterState = true
+                    } else {
+                        miCounterDown.myCounter.cancel()
+                        miCounterDown.counterState = false
                     }
                 }
             ) {
-                Text(text = "Pulsa aquí")
+                Text(text = if (miCounterDown.counterState) "Parar" else "Iniciar")
             }
         }
     }
