@@ -403,7 +403,6 @@ fun Work(
     modifier: Modifier = Modifier,
     onWorkCompleted: () -> Unit // Callback para cuando termine el tiempo de Work
 ) {
-    tiempoWork += 1
     var theCounter by remember { mutableStateOf(String.format("%02d:%02d", tiempoWork / 60, tiempoWork % 60)) }
 
     var texto by remember { mutableStateOf("Pause") }
@@ -463,7 +462,6 @@ fun Reset(
     modifier: Modifier = Modifier,
     onResetCompleted: () -> Int // Callback para cuando termine el tiempo de Reset
 ) {
-    tiempoReset += 1
     var theCounter by remember { mutableStateOf(String.format("%02d:%02d", tiempoReset / 60, tiempoReset % 60)) }
 
     var texto by remember { mutableStateOf("Pause") }
