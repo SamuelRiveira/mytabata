@@ -5,7 +5,7 @@ import android.util.Log
 
 class CounterDown(var segundos: Int, var loquehacealhacertick: (String) -> Unit) {
     private var counterState: Boolean = false  // Indica si el temporizador está corriendo
-    private var remainingTime: Long = (segundos * 1000L)  // Tiempo restante en milisegundos
+    private var remainingTime: Long = ((segundos + 1) * 1000L)  // Tiempo restante en milisegundos
     var isStarted: Boolean = false  // Indica si el temporizador ya ha empezado
     var isPaused: Boolean = false  // Indica si está pausado
 
@@ -61,7 +61,7 @@ class CounterDown(var segundos: Int, var loquehacealhacertick: (String) -> Unit)
     // Pausar el temporizador
     fun pause() {
         counterState = false
-        myCounter?.cancel()  // Cancelamos el temporizador, pero mantenemos `remainingTime`
+        myCounter?.cancel()  // Cancelamos el temporizador, pero mantenemos remainingTime
         isPaused = true
         Log.i("dam2", "Paused at: ${formatTime(remainingTime / 1000)}")
     }
