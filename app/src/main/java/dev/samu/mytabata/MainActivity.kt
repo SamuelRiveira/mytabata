@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
 var sets: Int = 0
 var tiempoWork: Int = 0
-var tiempoReset: Int = 0
+var tiempoRest: Int = 0
 
 @Composable
 fun PantallaPrincipal(
@@ -64,7 +64,7 @@ fun PantallaPrincipal(
 ) {
 
     var timeWork by remember { mutableStateOf(0) }
-    var timeReset by remember { mutableStateOf(0) }
+    var timeRest by remember { mutableStateOf(0) }
     var timeSets by remember { mutableStateOf(0) }
 
     Column {
@@ -234,7 +234,7 @@ fun PantallaPrincipal(
                     }
                 }
             }
-            //Reset
+            //Rest
             Row {
                 Column(
                     modifier = Modifier
@@ -246,7 +246,7 @@ fun PantallaPrincipal(
                             .fillMaxWidth()
                     ) {
                         Text(
-                            text = "Reset",
+                            text = "Rest",
                             fontSize = 25.sp,
                             modifier = Modifier
                                 .padding(bottom = 16.dp)
@@ -266,8 +266,8 @@ fun PantallaPrincipal(
                                     .height(40.dp)
                                     .width(40.dp)
                                     .clickable {
-                                        tiempoReset += 60
-                                        timeReset += 60
+                                        tiempoRest += 60
+                                        timeRest += 60
                                     }
                             )
                             Icon(
@@ -277,15 +277,15 @@ fun PantallaPrincipal(
                                     .height(40.dp)
                                     .width(40.dp)
                                     .clickable {
-                                        tiempoReset++
-                                        timeReset++
+                                        tiempoRest++
+                                        timeRest++
                                     }
                             )
                         }
 
                         Row {
                             Text(
-                                text = String.format("%02d:%02d", timeReset / 60, timeReset % 60),
+                                text = String.format("%02d:%02d", timeRest / 60, timeRest % 60),
                                 fontSize = 28.sp
                             )
                         }
@@ -298,9 +298,9 @@ fun PantallaPrincipal(
                                     .height(40.dp)
                                     .width(40.dp)
                                     .clickable {
-                                        if (tiempoReset >= 60) {
-                                            tiempoReset -= 60
-                                            timeReset -= 60
+                                        if (tiempoRest >= 60) {
+                                            tiempoRest -= 60
+                                            timeRest -= 60
                                         }
                                     }
                             )
@@ -311,9 +311,9 @@ fun PantallaPrincipal(
                                     .height(40.dp)
                                     .width(40.dp)
                                     .clickable {
-                                        if (tiempoReset > 0) {
-                                            tiempoReset--
-                                            timeReset--
+                                        if (tiempoRest > 0) {
+                                            tiempoRest--
+                                            timeRest--
                                         }
                                     }
                             )
@@ -383,12 +383,12 @@ fun AppContent(modifier: Modifier) {
         )
         sets = 0
         tiempoWork = 0
-        tiempoReset = 0
+        tiempoRest = 0
     } else {
         if (showWork) {
             Work(modifier = Modifier, onWorkCompleted = handleWorkCompletion)
         } else {
-            Reset(modifier = Modifier, onResetCompleted = handleResetCompletion as () -> Int)
+            Rest(modifier = Modifier, onResetCompleted = handleResetCompletion as () -> Int)
         }
     }
 }
@@ -454,16 +454,16 @@ fun Work(
 }
 
 @Composable
-fun Reset(
+fun Rest(
     modifier: Modifier = Modifier,
     onResetCompleted: () -> Int // Callback para cuando termine el tiempo de Reset
 ) {
-    var theCounter by remember { mutableStateOf(String.format("%02d:%02d", tiempoReset / 60, tiempoReset % 60)) }
+    var theCounter by remember { mutableStateOf(String.format("%02d:%02d", tiempoRest / 60, tiempoRest % 60)) }
 
     var texto by remember { mutableStateOf("Pause") }
 
     val miCounterDown = remember {
-        CounterDown(tiempoReset) { newValue ->
+        CounterDown(tiempoRest) { newValue ->
             theCounter = newValue
             CoroutineScope(Dispatchers.Main).launch {
                 if (newValue == "00:00") {
@@ -489,7 +489,7 @@ fun Reset(
             fontSize = 80.sp
         )
         Text(
-            text = "Reset",
+            text = "Rest",
             fontSize = 50.sp,
             color = Color.Black,
             modifier = Modifier
