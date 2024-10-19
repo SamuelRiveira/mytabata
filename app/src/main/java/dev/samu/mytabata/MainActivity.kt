@@ -32,6 +32,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 import dev.samu.mytabata.ui.theme.MytabataTheme
 
@@ -341,32 +345,29 @@ fun AppContent(modifier: Modifier) {
     var isLastSet by remember { mutableStateOf(false) }
     var resetCompleted by remember { mutableStateOf(false) }
 
-    // Función para manejar la finalización del trabajo
+    // Para manejar la finalización del trabajo
     val handleWorkCompletion = {
         if (remainingSets > 0) {
             showWork = false
-            Log.i("AppContent", "Work terminado, sets restantes: $remainingSets")
             if (remainingSets == 1) {
-                isLastSet = true // Marcar el último set
+                isLastSet = true
             }
         }
     }
 
-    // Función para manejar la finalización del reset
+    // Para manejar la finalización del reset
     val handleResetCompletion = {
         if (!isLastSet) {
             if (!resetCompleted) {
-                remainingSets-- // Decrementa los sets restantes
-                resetCompleted = true // Marca que el reset se ha completado
-                Log.i("AppContent", "Reset terminado, sets restantes: $remainingSets")
+                remainingSets--
+                resetCompleted = true
             }
             showWork = true
         } else {
             remainingSets = sets
             isLastSet = false
             showPantallaPrincipal = true
-            resetCompleted = false // Reinicia la variable de estado para el próximo ciclo
-            Log.i("AppContent", "Todos los sets completados, reiniciando.")
+            resetCompleted = false
         }
     }
 
@@ -377,22 +378,16 @@ fun AppContent(modifier: Modifier) {
                 remainingSets = sets
                 showPantallaPrincipal = false
                 showWork = true
-                resetCompleted = false // Asegúrate de reiniciar el estado al comenzar
-                Log.i("AppContent", "Reiniciando sets y mostrando Work")
+                resetCompleted = false
             }
         )
         sets = 0
         tiempoWork = 0
         tiempoReset = 0
-        Log.i("AppContent", "Mostrando PantallaPrincipal, sets completados.")
     } else {
         if (showWork) {
-            Log.i("AppContent", "Mostrando Work")
-            // Aquí deberías llamar a la función que maneja el trabajo, asegurándote de invocar handleWorkCompletion cuando termine
             Work(modifier = Modifier, onWorkCompleted = handleWorkCompletion)
         } else {
-            Log.i("AppContent", "Mostrando Reset")
-            // Similarmente, maneja la lógica para el reset
             Reset(modifier = Modifier, onResetCompleted = handleResetCompletion as () -> Int)
         }
     }
@@ -407,12 +402,14 @@ fun Work(
 
     var texto by remember { mutableStateOf("Pause") }
 
-    // Usamos `remember` para crear y mantener `miCounterDown` durante el ciclo de vida del Composable
     val miCounterDown = remember {
         CounterDown(tiempoWork) { newValue ->
             theCounter = newValue
-            if (newValue == "00:00") {
-                onWorkCompleted() // Cuando el contador llegue a 0, llamamos a onWorkCompleted
+            CoroutineScope(Dispatchers.Main).launch {
+                if (newValue == "00:00") {
+                    delay(1000) // Espera 1 segundo (1000 milisegundos)
+                    onWorkCompleted() // Llama a onWorkCompleted después de la espera
+                }
             }
         }
     }
@@ -440,7 +437,6 @@ fun Work(
         )
         Button(
             onClick = {
-                Log.i("error", "Botón pulsado")
                 miCounterDown.toggle()
                 if (texto == "Start"){
                     texto = "Pause"
@@ -466,12 +462,14 @@ fun Reset(
 
     var texto by remember { mutableStateOf("Pause") }
 
-    // Usamos `remember` para crear y mantener `miCounterDown` durante el ciclo de vida del Composable
     val miCounterDown = remember {
         CounterDown(tiempoReset) { newValue ->
             theCounter = newValue
-            if (newValue == "00:00") {
-                onResetCompleted() // Cuando el contador llegue a 0, llamamos a onResetCompleted
+            CoroutineScope(Dispatchers.Main).launch {
+                if (newValue == "00:00") {
+                    delay(1000) // Espera 1 segundo (1000 milisegundos)
+                    onResetCompleted() // Cuando el contador llegue a 0, llamamos a onResetCompleted
+                }
             }
         }
     }
@@ -487,11 +485,13 @@ fun Reset(
     ) {
         Text(
             text = theCounter,
+            color = Color.Black,
             fontSize = 80.sp
         )
         Text(
             text = "Reset",
             fontSize = 50.sp,
+            color = Color.Black,
             modifier = Modifier
                 .padding(36.dp)
         )
