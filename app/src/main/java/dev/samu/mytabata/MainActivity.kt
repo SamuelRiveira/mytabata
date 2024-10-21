@@ -1,21 +1,28 @@
 package dev.samu.mytabata
 
+import android.R.attr.onClick
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,6 +33,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -330,7 +340,7 @@ fun PantallaPrincipal(
                         onStartClicked()
                     }
                 ) {
-                    Text(text = "START", fontSize = 20.sp)
+                    Text(text = "⚡ START", fontSize = 20.sp)
                 }
             }
         }
@@ -389,7 +399,7 @@ fun AppContent(modifier: Modifier) {
         if (showWork) {
             Work(modifier = Modifier, onWorkCompleted = handleWorkCompletion)
         } else {
-            Rest(modifier = Modifier, onResetCompleted = handleResetCompletion as () -> Int)
+            Rest(modifier = Modifier, onResetCompleted = handleResetCompletion)
         }
     }
 }
@@ -401,7 +411,7 @@ fun Work(
 ) {
     var theCounter by remember { mutableStateOf(String.format("%02d:%02d", tiempoWork / 60, tiempoWork % 60)) }
 
-    var texto by remember { mutableStateOf("Pause") }
+    var currentIcon by remember { mutableStateOf(R.drawable.button_start) }
 
     val miCounterDown = remember {
         CounterDown(tiempoWork) { newValue ->
@@ -444,29 +454,59 @@ fun Work(
         Button(
             onClick = {
                 miCounterDown.toggle()
-                if (texto == "Start"){
-                    texto = "Pause"
-                } else{
-                    texto = "Start"
+
+                if (currentIcon == R.drawable.button_start) {
+                    currentIcon = R.drawable.button_pause
+                } else {
+                    currentIcon = R.drawable.button_start
                 }
             },
+            shape = CircleShape,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(36.dp)
+                .size(70.dp)
         ) {
-            Text(text = texto)
+            Image(
+                painter = painterResource(currentIcon),
+                contentDescription = null
+            )
         }
+//        Button(
+//            onClick = {},
+//            shape = RoundedCornerShape(38.dp),
+//            colors = ButtonDefaults.buttonColors(
+//                containerColor = Color.Transparent
+//            ),
+//            modifier = Modifier
+//                .size(250.dp) // Ajusta el tamaño como prefieras
+//                .clip(RoundedCornerShape(38.dp))
+//        ) {
+//            // Fondo con el degradado que simula el "inset box-shadow"
+//            Box(
+//                modifier = Modifier
+//                    .size(200.dp)
+//                    .background(
+//                        brush = Brush.linearGradient(
+//                            colors = listOf(
+//                                Color(0xFF9659BF), // Color superior
+//                                Color(0xFFC876FF), // Color medio
+//                                Color(0xFFFA94FF)  // Color inferior
+//                            )
+//                        ),
+//                        shape = RoundedCornerShape(38.dp)
+//                    )
+//            )
+//        }
     }
 }
 
 @Composable
 fun Rest(
     modifier: Modifier = Modifier,
-    onResetCompleted: () -> Int // Callback para cuando termine el tiempo de Reset
+    onResetCompleted: () -> Unit // Callback para cuando termine el tiempo de Reset
 ) {
     var theCounter by remember { mutableStateOf(String.format("%02d:%02d", tiempoRest / 60, tiempoRest % 60)) }
 
-    var texto by remember { mutableStateOf("Pause") }
+    var currentIcon by remember { mutableStateOf(R.drawable.button_start) }
 
     val miCounterDown = remember {
         CounterDown(tiempoRest) { newValue ->
@@ -506,21 +546,25 @@ fun Rest(
             modifier = Modifier
                 .padding(36.dp)
         )
+
         Button(
             onClick = {
-                Log.i("error", "Botón pulsado")
                 miCounterDown.toggle()
-                if (texto == "Start"){
-                    texto = "Pause"
-                } else{
-                    texto = "Start"
+
+                if (currentIcon == R.drawable.button_start) {
+                    currentIcon = R.drawable.button_pause
+                } else {
+                    currentIcon = R.drawable.button_start
                 }
             },
+            shape = CircleShape,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(36.dp)
+                .size(70.dp)
         ) {
-            Text(text = texto)
+            Image(
+                painter = painterResource(currentIcon),
+                contentDescription = null
+            )
         }
     }
 }
