@@ -330,7 +330,7 @@ fun PantallaPrincipal(
                         onStartClicked()
                     }
                 ) {
-                    Text(text = "Start", fontSize = 20.sp)
+                    Text(text = "START", fontSize = 20.sp)
                 }
             }
         }
@@ -360,6 +360,7 @@ fun AppContent(modifier: Modifier) {
         if (!isLastSet) {
             if (!resetCompleted) {
                 remainingSets--
+                sets--
                 resetCompleted = true
             }
             showWork = true
@@ -424,6 +425,11 @@ fun Work(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
+            text = "Sets: $sets",
+            color = Color.White,
+            fontSize = 30.sp
+        )
+        Text(
             text = theCounter,
             color = Color.White,
             fontSize = 80.sp
@@ -483,6 +489,11 @@ fun Rest(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            text = "Sets: $sets",
+            color = Color.Black,
+            fontSize = 30.sp
+        )
         Text(
             text = theCounter,
             color = Color.Black,
